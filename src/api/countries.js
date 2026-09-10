@@ -1,4 +1,5 @@
 import { featuredByCode } from '../data/featured'
+import { normalizeBorders } from '../utils/countryBorders.js'
 
 const API_BASE = 'https://countries.dev'
 const LIST_FIELDS = [
@@ -18,19 +19,6 @@ const LIST_FIELDS = [
   'flag',
   'flags',
 ].join(',')
-
-const normalizeBorders = (country) => {
-  const borders = Array.isArray(country.borders) ? [...country.borders] : []
-
-  // countries.dev can expose both sovereign France (FRA) and French Guiana (GUF)
-  // for Brazil. AtlasRoute lists the geographically adjacent destination itself,
-  // so the duplicate sovereign reference is removed when GUF is already present.
-  if (country.alpha3Code === 'BRA' && borders.includes('GUF')) {
-    return borders.filter((borderCode) => borderCode !== 'FRA')
-  }
-
-  return borders
-}
 
 const normalizeCountry = (country) => {
   const code = country.alpha3Code ?? country.alpha2Code
