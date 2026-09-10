@@ -288,8 +288,8 @@ For production Pixabay photography, configure `VITE_PIXABAY_API_KEY` in the depl
 ## Project Links
 
 - **Repository:** https://github.com/andrii-dolzhenko/react-homework-07-react-context-atlasroute
-- **GitHub Pages:** _add after deployment_
-- **Vercel:** _add after deployment_
+- **GitHub Pages:** https://andrii-dolzhenko.github.io/react-homework-07-react-context-atlasroute/
+- **Vercel:** https://react-homework-07-react-context-atl.vercel.app/
 
 ## Project Structure
 
