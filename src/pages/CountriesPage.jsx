@@ -111,7 +111,13 @@ export default function CountriesPage() {
         {filtered.length ? (
           <>
             <div className="country-grid">
-              {visibleCountries.map((country) => <CountryCard key={country.code} country={country} />)}
+              {visibleCountries.map((country, index) => (
+                <CountryCard
+                  key={country.code}
+                  country={country}
+                  imagePriority={index < 3}
+                />
+              ))}
             </div>
 
             {totalPages > 1 && (
