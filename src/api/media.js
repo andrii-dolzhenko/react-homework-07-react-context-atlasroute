@@ -6,10 +6,46 @@ const REQUEST_GAP_MS = 720
 let requestQueue = Promise.resolve()
 let lastRequestAt = 0
 
-const scheduleRequest = (task) => {
+const createAbortError = () => {
+  const error = new Error('The operation was aborted')
+  error.name = 'AbortError'
+  return error
+}
+
+const waitForRequestGap = (milliseconds, signal) => new Promise((resolve, reject) => {
+  if (!milliseconds) {
+    resolve()
+    return
+  }
+
+  if (signal?.aborted) {
+    reject(createAbortError())
+    return
+  }
+
+  let timer
+  const handleAbort = () => {
+    window.clearTimeout(timer)
+    reject(createAbortError())
+  }
+
+  timer = window.setTimeout(() => {
+    signal?.removeEventListener('abort', handleAbort)
+    resolve()
+  }, milliseconds)
+
+  signal?.addEventListener('abort', handleAbort, { once: true })
+})
+
+const scheduleRequest = (task, { signal } = {}) => {
   const run = requestQueue.then(async () => {
+    if (signal?.aborted) throw createAbortError()
+
     const wait = Math.max(0, REQUEST_GAP_MS - (Date.now() - lastRequestAt))
-    if (wait) await new Promise((resolve) => window.setTimeout(resolve, wait))
+    await waitForRequestGap(wait, signal)
+
+    if (signal?.aborted) throw createAbortError()
+
     lastRequestAt = Date.now()
     return task()
   })
@@ -80,7 +116,10 @@ const searchPixabay = async (query, { signal, perPage = 18 } = {}) => {
     per_page: String(perPage),
   })
 
-  const response = await scheduleRequest(() => fetch(`${PIXABAY_API}?${params}`, { signal }))
+  const response = await scheduleRequest(
+    () => fetch(`${PIXABAY_API}?${params}`, { signal }),
+    { signal },
+  )
   if (!response.ok) throw new Error(`Pixabay returned ${response.status}`)
   const data = await response.json()
   return data.hits ?? []

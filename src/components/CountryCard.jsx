@@ -4,7 +4,7 @@ import InlineLoader from './InlineLoader'
 import SaveCountryButton from './SaveCountryButton'
 import useCountryMedia from '../hooks/useCountryMedia'
 
-function CountryCard({ country }) {
+function CountryCard({ country, imagePriority = false }) {
   const cardRef = useRef(null)
   const [mediaEnabled, setMediaEnabled] = useState(Boolean(country.heroImage))
 
@@ -32,6 +32,7 @@ function CountryCard({ country }) {
 
   const backgroundImage = country.heroImage || images[0]?.preview || images[0]?.src || null
 
+
   return (
     <article ref={cardRef} className="country-card">
       <Link
@@ -41,7 +42,14 @@ function CountryCard({ country }) {
       >
         <div className={`country-card__media country-card__media--photo ${backgroundImage ? 'country-card__media--ready' : ''}`}>
           {backgroundImage && (
-            <img className="country-card__background" src={backgroundImage} alt="" loading="lazy" />
+            <img
+              className="country-card__background"
+              src={backgroundImage}
+              alt=""
+              loading={imagePriority ? 'eager' : 'lazy'}
+              fetchPriority={imagePriority ? 'high' : 'low'}
+              decoding="async"
+            />
           )}
 
           {!backgroundImage && loading && (

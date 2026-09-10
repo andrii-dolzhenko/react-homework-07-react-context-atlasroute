@@ -34,7 +34,14 @@ export default function CountryDetailsPage() {
     <article className="details-page">
       <section className={`details-hero shell ${dynamicHero ? '' : 'details-hero--flag'}`}>
         {dynamicHero ? (
-          <img src={dynamicHero} alt="" className="details-hero__image" />
+          <img
+            src={dynamicHero}
+            alt=""
+            className="details-hero__image"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
         ) : (
           <div className="details-hero__flag-visual">
             {country.flagUrl ? <img src={country.flagUrl} alt="" /> : <span>{country.flagEmoji}</span>}

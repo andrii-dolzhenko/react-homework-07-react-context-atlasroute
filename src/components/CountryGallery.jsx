@@ -63,7 +63,13 @@ export default function CountryGallery({ country, images, loading, error }) {
               onClick={() => setActiveIndex(index)}
               aria-label={`Open ${country.name} image ${index + 1}`}
             >
-              <img src={image.src} alt={image.title} loading="lazy" />
+              <img
+                src={image.src}
+                alt={image.title}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'low' : 'auto'}
+                decoding="async"
+              />
               <span className="gallery-item__hint">View</span>
             </button>
           ))}
@@ -112,6 +118,8 @@ export default function CountryGallery({ country, images, loading, error }) {
               className="gallery-modal__image"
               src={galleryImages[activeIndex].src}
               alt={galleryImages[activeIndex].title}
+              fetchPriority="high"
+              decoding="async"
             />
 
             <button
